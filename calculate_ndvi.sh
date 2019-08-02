@@ -26,6 +26,8 @@ if [ -z ${INPUT_RED_FACTOR} ]; then
   INPUT_RED_FACTOR=1.0
 fi
 
+echo "Starting NDVI process. Result storage file: $OUTPUT_RASTER"
+
 touch ${OUTPUT_RASTER}.meta
 
 DATA_URL="$(curl -s -f -L -u "${SCIHUB_USERNAME}:${SCIHUB_PASSWORD}" -H "Accept: application/json"  "https://scihub.copernicus.eu/apihub/odata/v1/Products?\$filter=Name%20eq%20'${INPUT_SOURCE}'" | jq -r '.d.results[0].__metadata.media_src')"
