@@ -5,12 +5,12 @@ RUN set -ex \
   && apt-get install -y --no-install-recommends 'curl' \
   && rm -rf /var/lib/apt/lists/* 
 
-# download snap installer version 6.0
+# download snap installer version 7.0
 RUN set -ex \
-  && curl -q http://step.esa.int/downloads/6.0/installers/esa-snap_sentinel_unix_6_0.sh \
-        -o esa-snap_sentinel_unix_6_0.sh \
-  && chmod +x esa-snap_sentinel_unix_6_0.sh \
-  && ./esa-snap_sentinel_unix_6_0.sh -q \
+  && curl -q http://step.esa.int/downloads/7.0/installers/esa-snap_sentinel_unix_7_0.sh \
+        -o esa-snap_sentinel_unix_7_0.sh \
+  && chmod +x esa-snap_sentinel_unix_7_0.sh \
+  && ./esa-snap_sentinel_unix_7_0.sh -q \
   && ln -s /usr/local/snap/bin/gpt /usr/bin/gpt \
   && sed -i -e 's/-Xmx1G/-Xmx4G/g' /usr/local/snap/bin/gpt.vmoptions 
 
