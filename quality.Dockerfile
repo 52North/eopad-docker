@@ -8,7 +8,8 @@ LABEL javaps.docker.version="1.4.0" \
   javaps.docker.process.inputs.Pdownsampling="Aggregation method of down sampling; String; Value must be one of 'First', 'Min', 'Max', 'Mean', 'Median'" \
   javaps.docker.process.inputs.PflagDownsampling="Aggregation method of flags; String; Value must be one of 'First', 'FlagAnd', 'FlagOr', 'FlagMedianAnd', 'FlagMedianOr'" \
   javaps.docker.process.inputs.Presolution="Resolution; String; Value must be one of '10', '20', '60'" \
-  javaps.docker.process.inputs.Pupsampling="Interpolation method of up sampling; String; Value must be one of 'Nearest', 'Bilinear', 'Bicubic'" 
+  javaps.docker.process.inputs.Pupsampling="Interpolation method of up sampling; String; Value must be one of 'Nearest', 'Bilinear', 'Bicubic'" \
+  javaps.docker.process.inputs.PgeoRegion="Subset of source image for analysis; geojson (only Polygon)" 
 
 RUN set -ex \
   && apt-get update \
@@ -17,6 +18,7 @@ RUN set -ex \
 
 ADD calculate_quality.sh /usr/local/bin/calculate_quality.sh
 ADD statistics.xml /usr/local/bin/statistics.xml
+ADD geojson-to-wkt.jq /usr/local/bin/geojson-to-wkt.jq
 
 ENV SCIHUB_USERNAME=
 ENV SCIHUB_PASSWORD=

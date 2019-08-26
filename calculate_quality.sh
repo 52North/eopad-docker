@@ -57,22 +57,24 @@ unzip ${INPUT_SOURCE}.zip
 #snap --nosplash --nogui --modules --update-all
 
 # Resample product
-gpt S2Resampling -SsourceProduct=${INPUT_SOURCE} -Pdownsampling=${Pdownsampling} -PflagDownsampling=${PflagDownsampling} -Presolution=${Presolution} -Pupsampling=${Pupsampling} -t resampled -f BEAM-DIMAP
-
-# Identify pixels
-gpt Idepix.Sentinel2 -Sl1cProduct=resampled.dim -t idepix -f BEAM-DIMAP
+/usr/bin/gpt S2Resampling -SsourceProduct=${INPUT_SOURCE} -Pdownsampling=${Pdownsampling} -PflagDownsampling=${PflagDownsampling} -Presolution=${Presolution} -Pupsampling=${Pupsampling} -t resampled -f BEAM-DIMAP
 
 # Use only a subset of the scene
-# gpt Subset ...
+/usr/bin/gpt Subset -SsourceProduct=resampled.dim -PgeoRegion=\"$(jq -rf geojson-to-wkt.jq ${PgeoRegion})\" -t subset -f BEAM-DIMAP
+
+# Identify pixels
+/usr/bin/gpt Idepix.Sentinel2 -Sl1cProduct=subset.dim -t idepix -f BEAM-DIMAP
 
 # Calculate statistics
-gpt statistics.xml idepix.dim 
+/usr/bin/gpt statistics.xml idepix.dim 
 
 # Retrieve relevant info from statistics and calculate percentage of cloud coverage 
 CLOUD=$(awk 'NR==2{print $9}' statistics.asc)  
 TOTAL=$(awk 'NR==2{print $20}' statistics.asc) 
 INVALID=$(awk 'NR==2{print $13}' statistics.asc) 
 CLOUD_COVERAGE=$(( ${CLOUD} * 100 / (${TOTAL}-${INVALID}) ))
+
+
 
 
 

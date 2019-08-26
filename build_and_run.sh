@@ -22,5 +22,6 @@ docker run --rm -it \
   --env PflagDownsampling=First \
   --env Presolution=20 \
   --env Pupsampling=Bicubic \
+  --env PgeoRegion=geoRegion.json \
   --volume $(pwd):/data/outputs \
   quality:latest
