@@ -1,55 +1,145 @@
+### GET PROCESSES
 GET http://localhost:8080/rest/processes/
 Accept: application/json
-###
+
+### CREATE NDVI
 POST http://localhost:8080/rest/processes/
 Content-Type: application/json
 
-< ndvi.json
-###
+< ndvi/application-package.json
+
+### CREATE QUALITY
+POST http://localhost:8080/rest/processes/
+Content-Type: application/json
+
+< quality/application-package.json
+
+### GET NDVI
 GET http://localhost:8080/rest/processes/org.n52.project.tb15.eopad.NdviCalculation
 Accept: application/json
-###
+
+### GET QUALITY
+GET http://localhost:8080/rest/processes/org.n52.project.tb15.eopad.SentinelQualityAreaOfInterest
+Accept: application/json
+
+
+### EXECUTE QUALITY
+POST http://localhost:8080/rest/processes/org.n52.project.tb15.eopad.SentinelQualityAreaOfInterest/jobs
+Accept: application/json
+Content-Type: application/json
+
+{
+  "inputs":[
+    {
+      "id": "source",
+      "input": { 
+        "format": { "mimeType": "text/plain" },
+        "value": { 
+          "inlineValue": "S2B_MSIL1C_20190614T103029_N0207_R108_T32ULC_20190614T124423"
+          }
+      }
+    },
+    {
+      "id": "areaOfInterest",
+      "input": {
+        "format": { "mimeType": "application/geo+json" },
+        "value": {
+          "inlineValue": {
+            "type": "Polygon",
+            "coordinates": [
+              [-77.047712, 38.892346],
+              [-76.994730, 38.902629]
+            ]
+          }
+        }
+      }
+    }
+  ],
+  "outputs": [
+    {
+      "id": "cloudCoverage",
+      "transmissionMode": "value"
+    }
+  ]
+}
+
+### EXECUTE NDVI
+POST http://localhost:8080/rest/processes/org.n52.project.tb15.eopad.NdviCalculation/jobs
+Accept: application/json
+Content-Type: application/json
+
+{
+  "inputs":[
+    {
+      "id": "source",
+      "input": { 
+        "format": { "mimeType": "text/plain" },
+        "value": { 
+          "inlineValue": "S2B_MSIL1C_20190614T103029_N0207_R108_T32ULC_20190614T124423"
+        }
+      }
+    },
+    {
+      "id": "nir_factor",
+      "input": { "value": 1.0 }
+    },
+    {
+      "id": "red_factor",
+      "input": { "value": 1.0 }
+    }
+  ],
+  "outputs": [
+    {
+      "id": "raster",
+      "format": { "mimeType": "image/geotiff" },
+      "transmissionMode": "reference"
+    }
+  ]
+}
+
+
+### UPDATE NDVI
 PUT http://localhost:8080/rest/processes/org.n52.project.tb15.eopad.NdviCalculation
 Content-Type: application/json
 
-< ndvi.json
-###
-DELETE http://localhost:8080/rest/processes/org.n52.project.tb15.eopad.NdviCalculation
-###
-POST http://localhost:8080/rest/processes/
+< ndvi/application-package.json
+
+### UPDATE QUALITY
+PUT http://localhost:8080/rest/processes/org.n52.project.tb15.eopad.SentinelQualityAreaOfInterest
 Content-Type: application/json
 
-< ndvi.json
+< quality/application-package.json
 
+### DELETE NDVI
+DELETE http://localhost:8080/rest/processes/org.n52.project.tb15.eopad.NdviCalculation
 
-####
-GET https://cloud.csiss.gmu.edu/ows15/geonet/rest3a/ogc/cat3a/services/org.n52.project.tb15.eopad.NdviCalculation
-Accept: application/geo+json
-###
+### DELETE QUALITY
+DELETE http://localhost:8080/rest/processes/org.n52.project.tb15.eopad.SentinelQualityAreaOfInterest
 
-POST https://cloud.csiss.gmu.edu/ows15/geonet/rest3a/ogc/cat3a/services/
-Accept: application/geo+json
-Authorization: Basic Y2F1dGVybWFubjpZQ1V4SEY0Zw==
-
-< insert-package.json
-###
-PUT https://cloud.csiss.gmu.edu/ows15/geonet/rest3a/ogc/cat3a/services/org.n52.project.tb15.eopad.NdviCalculation
-Content-Type: application/geo+json
-Authorization: Basic Y2F1dGVybWFubjpZQ1V4SEY0Zw==
-
-< insert-package.json
-###
+### GET GMU/SERVICE
 GET https://cloud.csiss.gmu.edu/ows15/geonet/rest3a/ogc/cat3a/services/org.52north.dev.testbed.eopad.rest
 Accept: application/geo+json
-###
-POST https://cloud.csiss.gmu.edu/ows15/geonet/rest3a/ogc/cat3a/services/
-Content-Type: application/geo+json
 Authorization: Basic Y2F1dGVybWFubjpZQ1V4SEY0Zw==
 
-< insert-service.json
-###
-PUT https://cloud.csiss.gmu.edu/ows15/geonet/rest3a/ogc/cat3a/services/org.52north.dev.testbed.eopad.rest
-Content-Type: application/geo+json
+### GET GMU/NDVI
+GET https://cloud.csiss.gmu.edu/ows15/geonet/rest3a/ogc/cat3a/services/org.n52.project.tb15.eopad.NdviCalculation
+Accept: application/geo+json
 Authorization: Basic Y2F1dGVybWFubjpZQ1V4SEY0Zw==
 
-< insert-service.json
+### GET GMU/NDVI
+GET https://cloud.csiss.gmu.edu/ows15/geonet/rest3a/ogc/cat3a/services/org.n52.project.tb15.eopad.SentinelQualityAreaOfInterest
+Accept: application/geo+json
+Authorization: Basic Y2F1dGVybWFubjpZQ1V4SEY0Zw==
+
+
+### GET DEIMOS/SERVICE
+GET http://servicecatalogue-ogctestbed15.deimos.pt/smi/services/org.52north.dev.testbed.eopad.rest
+Accept: application/geo+json
+
+### GET GMU/NDVI
+GET http://servicecatalogue-ogctestbed15.deimos.pt/smi/services/org.n52.project.tb15.eopad.NdviCalculation
+Accept: application/geo+json
+
+### GET GMU/NDVI
+GET http://servicecatalogue-ogctestbed15.deimos.pt/smi/services/org.n52.project.tb15.eopad.SentinelQualityAreaOfInterest
+Accept: application/geo+json
