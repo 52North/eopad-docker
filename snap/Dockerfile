@@ -3,10 +3,7 @@ FROM debian:latest
 RUN set -ex \
   && apt-get update \
   && apt-get install -y --no-install-recommends 'curl' \
-  && rm -rf /var/lib/apt/lists/* 
-
-# download snap installer version 7.0
-RUN set -ex \
+  && rm -rf /var/lib/apt/lists/* \
   && curl -q http://step.esa.int/downloads/7.0/installers/esa-snap_sentinel_unix_7_0.sh \
         -o esa-snap_sentinel_unix_7_0.sh \
   && chmod +x esa-snap_sentinel_unix_7_0.sh \

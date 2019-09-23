@@ -1,0 +1,55 @@
+GET http://localhost:8080/rest/processes/
+Accept: application/json
+###
+POST http://localhost:8080/rest/processes/
+Content-Type: application/json
+
+< ndvi.json
+###
+GET http://localhost:8080/rest/processes/org.n52.project.tb15.eopad.NdviCalculation
+Accept: application/json
+###
+PUT http://localhost:8080/rest/processes/org.n52.project.tb15.eopad.NdviCalculation
+Content-Type: application/json
+
+< ndvi.json
+###
+DELETE http://localhost:8080/rest/processes/org.n52.project.tb15.eopad.NdviCalculation
+###
+POST http://localhost:8080/rest/processes/
+Content-Type: application/json
+
+< ndvi.json
+
+
+####
+GET https://cloud.csiss.gmu.edu/ows15/geonet/rest3a/ogc/cat3a/services/org.n52.project.tb15.eopad.NdviCalculation
+Accept: application/geo+json
+###
+
+POST https://cloud.csiss.gmu.edu/ows15/geonet/rest3a/ogc/cat3a/services/
+Accept: application/geo+json
+Authorization: Basic Y2F1dGVybWFubjpZQ1V4SEY0Zw==
+
+< insert-package.json
+###
+PUT https://cloud.csiss.gmu.edu/ows15/geonet/rest3a/ogc/cat3a/services/org.n52.project.tb15.eopad.NdviCalculation
+Content-Type: application/geo+json
+Authorization: Basic Y2F1dGVybWFubjpZQ1V4SEY0Zw==
+
+< insert-package.json
+###
+GET https://cloud.csiss.gmu.edu/ows15/geonet/rest3a/ogc/cat3a/services/org.52north.dev.testbed.eopad.rest
+Accept: application/geo+json
+###
+POST https://cloud.csiss.gmu.edu/ows15/geonet/rest3a/ogc/cat3a/services/
+Content-Type: application/geo+json
+Authorization: Basic Y2F1dGVybWFubjpZQ1V4SEY0Zw==
+
+< insert-service.json
+###
+PUT https://cloud.csiss.gmu.edu/ows15/geonet/rest3a/ogc/cat3a/services/org.52north.dev.testbed.eopad.rest
+Content-Type: application/geo+json
+Authorization: Basic Y2F1dGVybWFubjpZQ1V4SEY0Zw==
+
+< insert-service.json
