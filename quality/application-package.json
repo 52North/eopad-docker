@@ -4,6 +4,7 @@
       "id": "org.n52.project.tb15.eopad.SentinelQualityAreaOfInterest",
       "title": "Calculation of quality of a area of interest for Sentinel-2",
       "description": "Calculation of quality of a area of interest for Sentinel-2",
+      "version": "1.0.0",
       "keywords": ["Cloud coverage"],
       "inputs": [
         {
@@ -15,12 +16,12 @@
           "input": {
             "formats": [
               {
-                "mimeType": "application/zip",
-                "default": false
-              },
-              {
                 "mimeType": "text/plain",
                 "default": true
+              },
+              {
+                "mimeType": "application/zip",
+                "default": false
               }
             ]
           }
@@ -123,6 +124,7 @@
           "output": {
             "literalDataDomains": [
               {
+                "default": true,
                 "dataType": { "name": "float" },
                 "valueDefinition": [
                   {
@@ -137,7 +139,6 @@
         }
       ]
     },
-    "processVersion": "1.0.0",
     "jobControlOptions": ["async-execute"],
     "outputTransmission": ["reference"]
   },
