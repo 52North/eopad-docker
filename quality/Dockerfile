@@ -5,7 +5,7 @@ RUN set -ex \
   && apt-get install -y --no-install-recommends jq unzip ca-certificates \
   && rm -rf /var/lib/apt/lists/* 
 
-ADD calculate_quality.sh geojson-to-wkt.jq /
+ADD calculate_quality.sh /
 
 ENV SCIHUB_USERNAME= \
     SCIHUB_PASSWORD= \

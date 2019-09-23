@@ -1,6 +1,6 @@
 #/bin/bash
 
-set -e
+set -ex
 
 function fail() {
   echo "$@" >&2 && exit 1
@@ -15,25 +15,22 @@ function fail() {
 
 echo "Starting NDVI process. Result storage file: $OUTPUT_RASTER"
 
-touch ${OUTPUT_RASTER}.meta
 if [ "${INPUT_SOURCE_MIME_TYPE}" = "text/plain" ]; then
+  INPUT_SOURCE=$(cat "${INPUT_SOURCE}")
   DATA_URL="$(curl -s -f -L -u "${SCIHUB_USERNAME}:${SCIHUB_PASSWORD}" -H "Accept: application/json"  "https://scihub.copernicus.eu/apihub/odata/v1/Products?\$filter=Name%20eq%20'${INPUT_SOURCE}'" | jq -r '.d.results[0].__metadata.media_src')"
-
   counter=1
-  while [ ${counter} -le 3 ]; do
-    echo "Downloading product (try #${counter})"
-    curl --silent --speed-time 15 --speed-limit 1024 -f -L -u "${SCIHUB_USERNAME}:${SCIHUB_PASSWORD}" -o "${INPUT_SOURCE}.zip" "${DATA_URL}"
+  while [ $counter -le 3 ]; do
+    echo "Downloading product (try #$counter)"
     STATUSCODE=$?
     echo "Download status code $STATUSCODE"
-    if test "$STATUSCODE" != "0"; then
-      echo "Download failed, retrying..."
-      ((counter++))
-    else
+    if curl --silent --speed-time 15 --speed-limit 1024 -f -L -u "${SCIHUB_USERNAME}:${SCIHUB_PASSWORD}" -o "${INPUT_SOURCE}.zip" "${DATA_URL}"; then
       echo "Download succeeded"
       counter=4
       break
+    else
+      echo "Download failed, retrying..."
+      ((counter++))
     fi
-    
   done
 elif [ "${INPUT_SOURCE_MIME_TYPE}" = "application/zip" ]; then
   mv "${INPUT_SOURCE}" "${INPUT_SOURCE}.zip"

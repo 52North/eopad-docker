@@ -1,6 +1,6 @@
 #/bin/bash
 
-set -e
+set -ex
 
 function fail() {
   echo "$@" >&2 && exit 1
@@ -19,20 +19,20 @@ function fail() {
 echo "Starting quality process."
 
 if [ "${INPUT_SOURCE_MIME_TYPE}" = "text/plain" ]; then
+  INPUT_SOURCE=$(cat "${INPUT_SOURCE}")
   DATA_URL="$(curl -s -f -L -u "${SCIHUB_USERNAME}:${SCIHUB_PASSWORD}" -H "Accept: application/json"  "https://scihub.copernicus.eu/apihub/odata/v1/Products?\$filter=Name%20eq%20'${INPUT_SOURCE}'" | jq -r '.d.results[0].__metadata.media_src')"
   counter=1
   while [ $counter -le 3 ]; do
     echo "Downloading product (try #$counter)"
-    curl --silent --speed-time 15 --speed-limit 1024 -f -L -u "${SCIHUB_USERNAME}:${SCIHUB_PASSWORD}" -o "${INPUT_SOURCE}.zip" "${DATA_URL}"
     STATUSCODE=$?
     echo "Download status code $STATUSCODE"
-    if test "$STATUSCODE" != "0"; then
-      echo "Download failed, retrying..."
-      ((counter++))
-    else
+    if curl --silent --speed-time 15 --speed-limit 1024 -f -L -u "${SCIHUB_USERNAME}:${SCIHUB_PASSWORD}" -o "${INPUT_SOURCE}.zip" "${DATA_URL}"; then
       echo "Download succeeded"
       counter=4
       break
+    else
+      echo "Download failed, retrying..."
+      ((counter++))
     fi
   done
 elif [ "${INPUT_SOURCE_MIME_TYPE}" = "application/zip" ]; then
@@ -53,7 +53,20 @@ unzip "${INPUT_SOURCE}.zip"
   -t resampled \
   -f BEAM-DIMAP
 
-GEO_REGION="$(jq -rf /geojson-to-wkt.jq ${INPUT_AREA_OF_INTEREST})"
+cat > geojson-to-wkt.jq <<-'EOF'
+  def join: map(tostring) | join(",");
+  def wrap: "(\(.))";
+  def wrap(t): t + wrap;
+  def wkt:
+    if .type == "Polygon" then
+      .coordinates | map(flatten | join | wrap) | join | wrap("POLYGON")
+    else
+      error("Error: unsupported type \(.type)\n")
+    end;
+  . | wkt
+EOF
+
+GEO_REGION="$(jq -rf geojson-to-wkt.jq ${INPUT_AREA_OF_INTEREST})"
 
 # Use only a subset of the scene
 /usr/bin/gpt Subset \
