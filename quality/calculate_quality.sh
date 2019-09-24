@@ -47,7 +47,7 @@ unzip "${INPUT_SOURCE}.zip"
 /usr/bin/gpt S2Resampling \
   -SsourceProduct=${INPUT_SOURCE} \
   -Pdownsampling=${INPUT_DOWNSAMPLING} \
-  -FLAG_DOWNSAMPLING=${INPUT_FLAG_DOWNSAMPLING} \
+  -PflagDownsampling=${INPUT_FLAG_DOWNSAMPLING} \
   -Presolution=${INPUT_RESOLUTION} \
   -Pupsampling=${INPUT_UPSAMPLING} \
   -t resampled \
