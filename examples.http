@@ -1,42 +1,42 @@
 ### GET PROCESSES
-GET http://localhost:8080/rest/processes/
+GET https://testbed.dev.52north.org/eopad/rest/processes/
 Accept: application/json
 
 ### CREATE NDVI
-POST http://localhost:8080/rest/processes/
+POST https://testbed.dev.52north.org/eopad/rest/processes/
 Content-Type: application/json
 
 < ndvi/application-package.json
 
 ### CREATE QUALITY
-POST http://localhost:8080/rest/processes/
+POST https://testbed.dev.52north.org/eopad/rest/processes/
 Content-Type: application/json
 
 < quality/application-package.json
 
 ### GET NDVI
-GET http://localhost:8080/rest/processes/org.n52.project.tb15.eopad.NdviCalculation
+GET https://testbed.dev.52north.org/eopad/rest/processes/org.n52.project.tb15.eopad.NdviCalculation
 Accept: application/json
 
 ### GET QUALITY
-GET http://localhost:8080/rest/processes/org.n52.project.tb15.eopad.SentinelQualityAreaOfInterest
+GET https://testbed.dev.52north.org/eopad/rest/processes/org.n52.project.tb15.eopad.SentinelQualityAreaOfInterest
 Accept: application/json
 
 
 ### EXECUTE QUALITY
-POST http://localhost:8080/rest/processes/org.n52.project.tb15.eopad.SentinelQualityAreaOfInterest/jobs
+POST https://testbed.dev.52north.org/eopad/rest/processes/org.n52.project.tb15.eopad.SentinelQualityAreaOfInterest/jobs
 Accept: application/json
 Content-Type: application/json
 
 {
-  "inputs":[
+  "inputs": [
     {
       "id": "source",
-      "input": { 
+      "input": {
         "format": { "mimeType": "text/plain" },
-        "value": { 
+        "value": {
           "inlineValue": "S2B_MSIL1C_20190614T103029_N0207_R108_T32ULC_20190614T124423"
-          }
+        }
       }
     },
     {
@@ -47,8 +47,17 @@ Content-Type: application/json
           "inlineValue": {
             "type": "Polygon",
             "coordinates": [
-              [-77.047712, 38.892346],
-              [-76.994730, 38.902629]
+              [
+                [7.1726426, 51.7542339],
+                [7.1532584, 51.7517],
+                [7.1596957, 51.7424401],
+                [7.1596957, 51.7424401],
+                [7.1770033, 51.7352082],
+                [7.1770033, 51.7352082],
+                [7.2216706, 51.7297689],
+                [7.2194428, 51.7550836],
+                [7.1726426, 51.7542339]
+              ]
             ]
           }
         }
@@ -58,13 +67,14 @@ Content-Type: application/json
   "outputs": [
     {
       "id": "cloudCoverage",
-      "transmissionMode": "value"
+      "transmissionMode": "value",
+      "format": { "mimeType": "text/plain" }
     }
   ]
 }
 
 ### EXECUTE NDVI
-POST http://localhost:8080/rest/processes/org.n52.project.tb15.eopad.NdviCalculation/jobs
+POST https://testbed.dev.52north.org/eopad/rest/processes/org.n52.project.tb15.eopad.NdviCalculation/jobs
 Accept: application/json
 Content-Type: application/json
 
@@ -97,24 +107,28 @@ Content-Type: application/json
   ]
 }
 
+###
+GET https://testbed.dev.52north.org/eopad/rest/processes/org.n52.project.tb15.eopad.NdviCalculation/jobs
+Accept: application/json
+
 
 ### UPDATE NDVI
-PUT http://localhost:8080/rest/processes/org.n52.project.tb15.eopad.NdviCalculation
+PUT https://testbed.dev.52north.org/eopad/rest/processes/org.n52.project.tb15.eopad.NdviCalculation
 Content-Type: application/json
 
 < ndvi/application-package.json
 
 ### UPDATE QUALITY
-PUT http://localhost:8080/rest/processes/org.n52.project.tb15.eopad.SentinelQualityAreaOfInterest
+PUT https://testbed.dev.52north.org/eopad/rest/processes/org.n52.project.tb15.eopad.SentinelQualityAreaOfInterest
 Content-Type: application/json
 
 < quality/application-package.json
 
 ### DELETE NDVI
-DELETE http://localhost:8080/rest/processes/org.n52.project.tb15.eopad.NdviCalculation
+DELETE https://testbed.dev.52north.org/eopad/rest/processes/org.n52.project.tb15.eopad.NdviCalculation
 
 ### DELETE QUALITY
-DELETE http://localhost:8080/rest/processes/org.n52.project.tb15.eopad.SentinelQualityAreaOfInterest
+DELETE https://testbed.dev.52north.org/eopad/rest/processes/org.n52.project.tb15.eopad.SentinelQualityAreaOfInterest
 
 ### GET GMU/SERVICE
 GET https://cloud.csiss.gmu.edu/ows15/geonet/rest3a/ogc/cat3a/services/org.52north.dev.testbed.eopad.rest
@@ -143,3 +157,8 @@ Accept: application/geo+json
 ### GET GMU/NDVI
 GET http://servicecatalogue-ogctestbed15.deimos.pt/smi/services/org.n52.project.tb15.eopad.SentinelQualityAreaOfInterest
 Accept: application/geo+json
+
+### Get status
+GET https://testbed.dev.52north.org/eopad/rest/processes/org.n52.project.tb15.eopad.NdviCalculation/jobs/06d38f16-82c5-4b13-8156-237243c69a97
+### Get result
+GET https://testbed.dev.52north.org/eopad/rest/processes/org.n52.project.tb15.eopad.NdviCalculation/jobs/06d38f16-82c5-4b13-8156-237243c69a97/result/raster
