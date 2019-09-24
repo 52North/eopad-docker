@@ -10,8 +10,6 @@ function fail() {
 [ -z "${SCIHUB_PASSWORD}" ] && fail 'missing ${SCIHUB_PASSWORD}'
 [ -z "${INPUT_SOURCE}" ] && fail 'missing ${INPUT_SOURCE}'
 [ -z "${OUTPUT_RASTER}" ] && fail 'missing ${OUTPUT_RASTER}'
-[ -z "${INPUT_NIR_FACTOR}" ] && INPUT_NIR_FACTOR=1.0
-[ -z "${INPUT_RED_FACTOR}" ] && INPUT_RED_FACTOR=1.0
 
 echo "Starting NDVI process. Result storage file: $OUTPUT_RASTER"
 
@@ -40,14 +38,17 @@ unzip "${INPUT_SOURCE}.zip"
 
 
 OPERATION=NDVIop
-OPTS=(-PredFactor=${INPUT_RED_FACTOR}
-      -PnirFactor=${INPUT_NIR_FACTOR})
+OPTS=(-PredFactor=${INPUT_RED_FACTOR:-1.0}
+      -PnirFactor=${INPUT_NIR_FACTOR:-1.0}
+      -Dsnap.dataio.bigtiff.compression.type=LZW
+      -Dsnap.dataio.bigtiff.tiling.width=256
+      -Dsnap.dataio.bigtiff.tiling.height=256)
 
 [ -n "${INPUT_RED_SOURCE_BAND}" ] && OPTS+=(-PredSourceBand=${INPUT_RED_SOURCE_BAND})
 [ -n "${INPUT_NIR_SOURCE_BAND}" ] && OPTS+=(-PredSourceBand=${INPUT_NIR_SOURCE_BAND})
 
 OPTS+=(-Ssource=${INPUT_SOURCE}.SAFE)
-OPTS+=(-f GeoTIFF -t ${OUTPUT_RASTER})
+OPTS+=(-f GeoTIFF-BigTIFF -t ${OUTPUT_RASTER})
 
 #snap --nosplash --nogui --modules --update-all
 
