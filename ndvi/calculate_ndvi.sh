@@ -54,8 +54,8 @@ OPTS+=(-f GeoTIFF-BigTIFF -t ${OUTPUT_RASTER})
 
 if [ $# -eq 0 ]; then
   echo "Running /usr/bin/gpt ${OPERATION} ${OPTS[@]}"
-  /usr/bin/gpt "${OPERATION}" "${OPTS[@]}"
+  gpt "${OPERATION}" "${OPTS[@]}"
   mv "${OUTPUT_RASTER}.tif" "${OUTPUT_RASTER}"
 else
-  exec /usr/bin/gpt $*
+  exec gpt $*
 fi
