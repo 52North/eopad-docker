@@ -46,10 +46,6 @@ EOF
 [ -z "${INPUT_SOURCE}" ] && fail 'missing ${INPUT_SOURCE}'
 [ -z "${INPUT_AREA_OF_INTEREST}" ] && fail 'missing ${INPUT_AREA_OF_INTEREST}'
 [ -z "${OUTPUT_CLOUD_COVERAGE}" ] && fail 'missing ${OUTPUT_CLOUD_COVERAGE}'
-[ -z "${INPUT_DOWNSAMPLING}" ] && INPUT_DOWNSAMPLING="Min"
-[ -z "${INPUT_FLAG_DOWNSAMPLING}" ] && INPUT_FLAG_DOWNSAMPLING="First"
-[ -z "${INPUT_RESOLUTION}" ] && INPUT_RESOLUTION="20"
-[ -z "${INPUT_UPSAMPLING}" ] && INPUT_UPSAMPLING="Bicubic"
 
 echo "Starting quality process."
 
@@ -81,10 +77,10 @@ unzip "${INPUT_SOURCE}.zip"
 # Resample product
 gpt S2Resampling \
   -SsourceProduct=${INPUT_SOURCE}.SAFE \
-  -Pdownsampling=${INPUT_DOWNSAMPLING} \
-  -PflagDownsampling=${INPUT_FLAG_DOWNSAMPLING} \
-  -Presolution=${INPUT_RESOLUTION} \
-  -Pupsampling=${INPUT_UPSAMPLING} \
+  -Pdownsampling=${INPUT_DOWNSAMPLING:-Min} \
+  -PflagDownsampling=${INPUT_FLAG_DOWNSAMPLING:-First} \
+  -Presolution=${INPUT_RESOLUTION:-20} \
+  -Pupsampling=${INPUT_UPSAMPLING:-Bicubic} \
   -t resampled \
   -f BEAM-DIMAP
 
