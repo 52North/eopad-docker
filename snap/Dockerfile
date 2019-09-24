@@ -9,7 +9,7 @@ RUN set -ex \
   && chmod +x esa-snap_sentinel_unix_7_0.sh \
   && ./esa-snap_sentinel_unix_7_0.sh -q \
   && ln -s /usr/local/snap/bin/gpt /usr/bin/gpt \
-  && sed -i -e 's/-Xmx1G/-Xmx4G/g' /usr/local/snap/bin/gpt.vmoptions 
+  && sed -i -e 's/-Xmx\d+G/-Xmx5G/g' /usr/local/snap/bin/gpt.vmoptions 
 
 ENTRYPOINT ["/usr/local/snap/bin/gpt"]
 CMD ["-h"]
