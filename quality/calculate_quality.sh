@@ -6,6 +6,41 @@ function fail() {
   echo "$@" >&2 && exit 1
 }
 
+cat > geojson-to-wkt.jq <<-'EOF'
+  def join: map(tostring) | join(",");
+  def wrap: "(\(.))";
+  def wrap(t): t + wrap;
+  def wkt:
+    if .type == "Polygon" then
+      .coordinates | map(flatten | join | wrap) | join | wrap("POLYGON")
+    else
+      error("Error: unsupported type \(.type)\n")
+    end;
+  . | wkt
+EOF
+
+cat > statistics.xml <<-'EOF'
+  <graph id="quality-process">
+    <version>1.0</version>
+    <node id="statistics">
+      <operator>StatisticsOp</operator>
+      <sources>
+        <sourceProducts>${sourceProducts}</sourceProducts>
+      </sources>
+      <parameters>
+        <bandConfigurations>
+          <bandConfiguration>
+            <sourceBandName>pixel_classif_flags</sourceBandName>
+            <retrieveCategoricalStatistics>true</retrieveCategoricalStatistics>
+          </bandConfiguration>
+        </bandConfigurations>
+        <outputAsciiFile>statistics.asc</outputAsciiFile>
+      </parameters>
+    </node>
+  </graph>
+EOF
+
+
 [ -z "${SCIHUB_USERNAME}" ] && fail 'missing ${SCIHUB_USERNAME}'
 [ -z "${SCIHUB_PASSWORD}" ] && fail 'missing ${SCIHUB_PASSWORD}'
 [ -z "${INPUT_SOURCE}" ] && fail 'missing ${INPUT_SOURCE}'
@@ -44,7 +79,7 @@ unzip "${INPUT_SOURCE}.zip"
 #snap --nosplash --nogui --modules --update-all
 
 # Resample product
-/usr/bin/gpt S2Resampling \
+gpt S2Resampling \
   -SsourceProduct=${INPUT_SOURCE}.SAFE \
   -Pdownsampling=${INPUT_DOWNSAMPLING} \
   -PflagDownsampling=${INPUT_FLAG_DOWNSAMPLING} \
@@ -53,58 +88,23 @@ unzip "${INPUT_SOURCE}.zip"
   -t resampled \
   -f BEAM-DIMAP
 
-cat > geojson-to-wkt.jq <<-'EOF'
-  def join: map(tostring) | join(",");
-  def wrap: "(\(.))";
-  def wrap(t): t + wrap;
-  def wkt:
-    if .type == "Polygon" then
-      .coordinates | map(flatten | join | wrap) | join | wrap("POLYGON")
-    else
-      error("Error: unsupported type \(.type)\n")
-    end;
-  . | wkt
-EOF
-
 GEO_REGION="$(jq -rf geojson-to-wkt.jq ${INPUT_AREA_OF_INTEREST})"
 
 # Use only a subset of the scene
-/usr/bin/gpt Subset \
+gpt Subset \
   -SsourceProduct=resampled.dim \
   -PgeoRegion=\"${GEO_REGION}\" \
   -t subset \
   -f BEAM-DIMAP
 
 # Identify pixels
-/usr/bin/gpt Idepix.Sentinel2 \
+gpt Idepix.Sentinel2 \
   -Sl1cProduct=subset.dim \
   -t idepix \
   -f BEAM-DIMAP
 
-
-cat > statistics.xml <<-'EOF'
-  <graph id="quality-process">
-    <version>1.0</version>
-    <node id="statistics">
-      <operator>StatisticsOp</operator>
-      <sources>
-        <sourceProducts>${sourceProducts}</sourceProducts>
-      </sources>
-      <parameters>
-        <bandConfigurations>
-          <bandConfiguration>
-            <sourceBandName>pixel_classif_flags</sourceBandName>
-            <retrieveCategoricalStatistics>true</retrieveCategoricalStatistics>
-          </bandConfiguration>
-        </bandConfigurations>
-        <outputAsciiFile>statistics.asc</outputAsciiFile>
-      </parameters>
-    </node>
-  </graph>
-EOF
-
 # Calculate statistics
-/usr/bin/gpt /statistics.xml idepix.dim 
+gpt statistics.xml idepix.dim 
 
 # Retrieve relevant info from statistics and calculate percentage of cloud coverage 
 # CLOUD=$9, TOTAL=$20, INVALID=$13
