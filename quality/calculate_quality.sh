@@ -45,7 +45,7 @@ unzip "${INPUT_SOURCE}.zip"
 
 # Resample product
 /usr/bin/gpt S2Resampling \
-  -SsourceProduct=${INPUT_SOURCE} \
+  -SsourceProduct=${INPUT_SOURCE}.SAFE \
   -Pdownsampling=${INPUT_DOWNSAMPLING} \
   -PflagDownsampling=${INPUT_FLAG_DOWNSAMPLING} \
   -Presolution=${INPUT_RESOLUTION} \
