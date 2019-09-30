@@ -20,7 +20,7 @@ cat > geojson-to-wkt.jq <<-'EOF'
 EOF
 
 cat > statistics.xml <<-'EOF'
-  <graph id="quality-process">
+ <graph id="quality-process">
     <version>1.0</version>
     <node id="statistics">
       <operator>StatisticsOp</operator>
@@ -30,14 +30,19 @@ cat > statistics.xml <<-'EOF'
       <parameters>
         <bandConfigurations>
           <bandConfiguration>
-            <sourceBandName>pixel_classif_flags</sourceBandName>
-            <retrieveCategoricalStatistics>true</retrieveCategoricalStatistics>
+            <expression>pixel_classif_flags.IDEPIX_INVALID</expression>
+            <validPixelExpression>not IDEPIX_INVALID</validPixelExpression>
+          </bandConfiguration>
+          <bandConfiguration>
+            <expression>pixel_classif_flags.IDEPIX_CLOUD</expression>
+            <validPixelExpression>IDEPIX_CLOUD and not IDEPIX_INVALID</validPixelExpression>
           </bandConfiguration>
         </bandConfigurations>
         <outputAsciiFile>statistics.asc</outputAsciiFile>
       </parameters>
     </node>
   </graph>
+
 EOF
 
 
@@ -79,8 +84,8 @@ gpt S2Resampling \
   -SsourceProduct=${INPUT_SOURCE}.SAFE \
   -Pdownsampling=${INPUT_DOWNSAMPLING:-Min} \
   -PflagDownsampling=${INPUT_FLAG_DOWNSAMPLING:-First} \
-  -Presolution=${INPUT_RESOLUTION:-20} \
-  -Pupsampling=${INPUT_UPSAMPLING:-Bicubic} \
+  -Presolution=${INPUT_RESOLUTION:-60} \
+  -Pupsampling=${INPUT_UPSAMPLING:-Bilinear} \
   -t resampled \
   -f BEAM-DIMAP
 
@@ -103,5 +108,6 @@ gpt Idepix.Sentinel2 \
 gpt statistics.xml idepix.dim 
 
 # Retrieve relevant info from statistics and calculate percentage of cloud coverage 
-# CLOUD=$9, TOTAL=$20, INVALID=$13
-awk 'NR==2{print ($9*100)/($20-$13)}' statistics.asc > ${OUTPUT_CLOUD_COVERAGE}
+CLOUD=$(awk 'NR==3{print $11}' <statistics.asc)
+TOTAL=$(awk 'NR==2{print $11}' <statistics.asc)
+echo "scale=2;(${CLOUD}*100)/(${TOTAL})" | bc > ${OUTPUT_CLOUD_COVERAGE}

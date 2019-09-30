@@ -92,7 +92,7 @@
               {
                 "default": true,
                 "dataType": { "name": "integer" },
-                "defaultValue": "20",
+                "defaultValue": "60",
                 "valueDefinition": ["10", "20", "60"]
               }
             ]
@@ -109,7 +109,7 @@
               {
                 "default": true,
                 "dataType": { "name": "string" },
-                "defaultValue": "Bicubic",
+                "defaultValue": "Bilinear",
                 "valueDefinition": ["Nearest", "Bilinear", "Bicubic"]
               }
             ]

@@ -2,7 +2,7 @@ FROM 52north/testbed-eopad-snap:latest
 
 RUN set -ex \
   && apt-get update \
-  && apt-get install -y --no-install-recommends jq unzip ca-certificates \
+  && apt-get install -y --no-install-recommends jq unzip ca-certificates bc \
   && rm -rf /var/lib/apt/lists/* 
 
 ADD calculate_quality.sh /
