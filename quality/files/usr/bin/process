@@ -30,7 +30,7 @@ gpt S2Resampling -Pdownsampling=Min -PflagDownsampling=First -Presolution=60 -Pu
   -SsourceProduct="${INPUT_SOURCE}.SAFE" -t resampled -f BEAM-DIMAP
 
 # Use only a subset of the scene
-gpt Subset -SsourceProduct=subset -PgeoRegion="\"${area_of_interest}\"" -t subset -f BEAM-DIMAP
+gpt Subset -SsourceProduct=resampled -PgeoRegion="\"${area_of_interest}\"" -t subset -f BEAM-DIMAP
 
 # Identify pixels
 gpt Idepix.Sentinel2 -Sl1cProduct=subset.dim -t idepix -f BEAM-DIMAP
