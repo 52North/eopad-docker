@@ -1,4 +1,4 @@
-FROM 52north/testbed-eopad-snap:latest
+FROM 52north/testbed-eopad-snap:6
 
 ENV SCIHUB_USERNAME= \
     SCIHUB_PASSWORD= \
