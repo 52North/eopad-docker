@@ -11,8 +11,6 @@ function fail() {
 [ -z "${INPUT_SOURCE}" ] && fail 'missing ${INPUT_SOURCE}'
 [ -z "${OUTPUT_RASTER}" ] && fail 'missing ${OUTPUT_RASTER}'
 
-echo "Starting NDVI process. Result storage file: $OUTPUT_RASTER"
-
 if [ "${INPUT_SOURCE_MIME_TYPE}" = "text/plain" ]; then
   INPUT_SOURCE=$(cat "${INPUT_SOURCE}")
   DATA_URL="$(curl -s -f -L -u "${SCIHUB_USERNAME}:${SCIHUB_PASSWORD}" -H "Accept: application/json"  "https://scihub.copernicus.eu/apihub/odata/v1/Products?\$filter=Name%20eq%20'${INPUT_SOURCE}'" | jq -r '.d.results[0].__metadata.media_src')"
@@ -49,8 +47,6 @@ OPTS=(-PredFactor=${INPUT_RED_FACTOR:-1.0}
 
 OPTS+=(-Ssource=${INPUT_SOURCE}.SAFE)
 OPTS+=(-f GeoTIFF-BigTIFF -t ${OUTPUT_RASTER})
-
-#snap --nosplash --nogui --modules --update-all
 
 if [ $# -eq 0 ]; then
   echo "Running /usr/bin/gpt ${OPERATION} ${OPTS[@]}"
