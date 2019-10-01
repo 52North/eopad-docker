@@ -1,7 +1,5 @@
 FROM 52north/testbed-eopad-snap:latest
 
-ADD process.sh /usr/local/bin/process
-
 ENV SCIHUB_USERNAME= \
     SCIHUB_PASSWORD= \
     INPUT_SOURCE= \ 
@@ -10,5 +8,7 @@ ENV SCIHUB_USERNAME= \
     INPUT_RED_FACTOR=1.0 \
     INPUT_RED_SOURCE_BAND= \
     OUTPUT_RASTER=
+
+COPY files/ /
 
 CMD [ "/usr/local/bin/process" ]

@@ -24,4 +24,4 @@ RUN set -ex \
 
 WORKDIR /snap
 
-COPY download-product.sh /usr/local/bin/download-product
+COPY files/ /
