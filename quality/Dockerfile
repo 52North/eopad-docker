@@ -8,4 +8,4 @@ ENV SCIHUB_USERNAME= \
 
 COPY files/ /
 
-CMD [ "/usr/local/bin/process" ]
+CMD [ "/usr/bin/process" ]
