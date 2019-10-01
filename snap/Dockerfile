@@ -18,5 +18,7 @@ RUN set -ex \
   && mkdir /snap
 
 WORKDIR /snap
+
 ENTRYPOINT ["/usr/local/snap/bin/gpt"]
+
 CMD ["-h"]
