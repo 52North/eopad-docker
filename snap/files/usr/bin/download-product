@@ -42,3 +42,6 @@ function data_url() {
 DATA_URL="$(data_url ${NAME})"
 
 retry "${CURL[@]}" --speed-time 15 --speed-limit 1024 -o "${NAME}.zip" "${DATA_URL}"
+
+unzip "${NAME}.zip"
+rm "${NAME}.zip"
