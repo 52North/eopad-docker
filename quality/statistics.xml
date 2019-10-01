@@ -1,0 +1,22 @@
+<graph id="quality-process">
+  <version>1.0</version>
+  <node id="statistics">
+    <operator>StatisticsOp</operator>
+    <sources>
+      <sourceProducts>${sourceProducts}</sourceProducts>
+    </sources>
+    <parameters>
+      <bandConfigurations>
+        <bandConfiguration>
+          <expression>pixel_classif_flags.IDEPIX_INVALID</expression>
+          <validPixelExpression>not IDEPIX_INVALID</validPixelExpression>
+        </bandConfiguration>
+        <bandConfiguration>
+          <expression>pixel_classif_flags.IDEPIX_CLOUD</expression>
+          <validPixelExpression>IDEPIX_CLOUD and not IDEPIX_INVALID</validPixelExpression>
+        </bandConfiguration>
+      </bandConfigurations>
+      <outputAsciiFile>statistics.asc</outputAsciiFile>
+    </parameters>
+  </node>
+</graph>

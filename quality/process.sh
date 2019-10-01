@@ -1,0 +1,42 @@
+#/bin/bash
+
+set -ex
+
+function fail() {
+  echo "$@" >&2 && exit 1
+}
+
+[ $# -ne 0 ] && exec gpt $*
+
+[ -z "${INPUT_SOURCE}" ] && fail 'missing ${INPUT_SOURCE}'
+[ -z "${INPUT_AREA_OF_INTEREST}" ] && fail 'missing ${INPUT_AREA_OF_INTEREST}'
+[ -z "${OUTPUT_CLOUD_COVERAGE}" ] && fail 'missing ${OUTPUT_CLOUD_COVERAGE}'
+
+if [ "${INPUT_SOURCE_MIME_TYPE}" = "text/plain" ]; then
+  INPUT_SOURCE=$(cat "${INPUT_SOURCE}")
+  download-product "${INPUT_SOURCE}"
+elif [ "${INPUT_SOURCE_MIME_TYPE}" = "application/zip" ]; then
+  mv "${INPUT_SOURCE}" "${INPUT_SOURCE}.zip"
+  unzip "${INPUT_SOURCE}.zip" 
+  rm "${INPUT_SOURCE}.zip"
+fi
+
+area_of_interest="$(jq -rf geojson-to-wkt.jq "${INPUT_AREA_OF_INTEREST}")"
+
+# Resample product
+gpt S2Resampling -Pdownsampling=Min -PflagDownsampling=First -Presolution=60 -Pupsampling=Bilinear \
+  -SsourceProduct="${INPUT_SOURCE}.SAFE" -t resampled -f BEAM-DIMAP
+
+# Use only a subset of the scene
+gpt Subset -SsourceProduct=subset -PgeoRegion="\"${area_of_interest}\"" -t subset -f BEAM-DIMAP
+
+# Identify pixels
+gpt Idepix.Sentinel2 -Sl1cProduct=subset.dim -t idepix -f BEAM-DIMAP
+
+# Calculate statistics
+gpt statistics.xml idepix.dim 
+
+# Retrieve relevant info from statistics and calculate percentage of cloud coverage 
+cloud=$(awk 'NR==3{print $11}' <statistics.asc)
+total=$(awk 'NR==2{print $11}' <statistics.asc)
+bc -l <<<"100*${cloud}/${total}" > "${OUTPUT_CLOUD_COVERAGE}"

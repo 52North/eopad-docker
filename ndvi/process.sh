@@ -1,0 +1,40 @@
+#/bin/bash
+
+set -ex
+
+function fail() {
+  echo "$@" >&2 && exit 1
+}
+[ $# -ne 0 ] && exec gpt $*
+[ -z "${INPUT_SOURCE}" ] && fail 'missing ${INPUT_SOURCE}'
+[ -z "${OUTPUT_RASTER}" ] && fail 'missing ${OUTPUT_RASTER}'
+
+if [ "${INPUT_SOURCE_MIME_TYPE}" = "text/plain" ]; then
+  INPUT_SOURCE=$(cat "${INPUT_SOURCE}")
+  download-product ${INPUT_SOURCE}
+elif [ "${INPUT_SOURCE_MIME_TYPE}" = "application/zip" ]; then
+  mv "${INPUT_SOURCE}" "${INPUT_SOURCE}.zip"
+  unzip "${INPUT_SOURCE}.zip" 
+  rm "${INPUT_SOURCE}.zip"
+fi
+
+OPTS=(NDVIop
+      -PredFactor=${INPUT_RED_FACTOR:-1.0}
+      -PnirFactor=${INPUT_NIR_FACTOR:-1.0}
+      -Dsnap.dataio.bigtiff.compression.type=LZW
+      -Dsnap.dataio.bigtiff.tiling.width=256
+      -Dsnap.dataio.bigtiff.tiling.height=256
+      -Ssource=${INPUT_SOURCE}.SAFE
+      -f GeoTIFF-BigTIFF -t ${OUTPUT_RASTER})
+
+if [ -n "${INPUT_RED_SOURCE_BAND}" ]; then
+  OPTS+=(-PredSourceBand=${INPUT_RED_SOURCE_BAND})
+fi
+
+if [ -n "${INPUT_NIR_SOURCE_BAND}" ]; then
+  OPTS+=(-PredSourceBand=${INPUT_NIR_SOURCE_BAND})
+fi
+
+gpt "${OPTS[@]}"
+
+mv "${OUTPUT_RASTER}.tif" "${OUTPUT_RASTER}"

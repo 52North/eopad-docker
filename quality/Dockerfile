@@ -1,11 +1,6 @@
 FROM 52north/testbed-eopad-snap:latest
-
-RUN set -ex \
-  && apt-get update \
-  && apt-get install -y --no-install-recommends jq unzip ca-certificates bc \
-  && rm -rf /var/lib/apt/lists/* 
-
-ADD calculate_quality.sh /
+  
+ADD calculate_quality.sh /usr/local/bin/process
 
 ENV SCIHUB_USERNAME= \
     SCIHUB_PASSWORD= \
@@ -13,6 +8,6 @@ ENV SCIHUB_USERNAME= \
     INPUT_AREA_OF_INTEREST= \
     OUTPUT_CLOUD_COVERAGE=
 
-ENTRYPOINT [ "/bin/bash", "-c" ]
+COPY statistics.xml geosjon-to-wkt.jq /snap/
 
-CMD [ "/calculate_quality.sh" ]
+CMD [ "/usr/local/bin/process" ]

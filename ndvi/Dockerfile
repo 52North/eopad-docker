@@ -1,11 +1,6 @@
 FROM 52north/testbed-eopad-snap:latest
 
-RUN set -ex \
-  && apt-get update \
-  && apt-get install -y --no-install-recommends jq unzip ca-certificates \
-  && rm -rf /var/lib/apt/lists/* 
-
-ADD calculate_ndvi.sh /usr/local/bin/calculate_ndvi.sh
+ADD process.sh /usr/local/bin/process
 
 ENV SCIHUB_USERNAME= \
     SCIHUB_PASSWORD= \
@@ -16,6 +11,4 @@ ENV SCIHUB_USERNAME= \
     INPUT_RED_SOURCE_BAND= \
     OUTPUT_RASTER=
 
-ENTRYPOINT [ "/bin/bash", "-c" ]
-
-CMD [ "/usr/local/bin/calculate_ndvi.sh" ]
+CMD [ "/usr/local/bin/process" ]

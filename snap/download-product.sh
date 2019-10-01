@@ -1,0 +1,44 @@
+#/bin/bash
+
+set -ex
+
+NAME="$1"
+
+[ -z "${SCIHUB_USERNAME}" ] && fail 'missing ${SCIHUB_USERNAME}'
+[ -z "${SCIHUB_PASSWORD}" ] && fail 'missing ${SCIHUB_PASSWORD}'
+[ -z "${NAME}" ] && fail "usage: $0 <name>"
+
+CURL=(curl -s -f -L -u "${SCIHUB_USERNAME}:${SCIHUB_PASSWORD}")
+
+function fail() {
+  echo "$@" >&2 && exit 1
+}
+
+function retry {
+  local n=1
+  local max=5
+  local delay=1
+
+  while true; do
+    "$@" && break || {
+      if [[ $n -lt $max ]]; then
+        ((n++))
+        echo "Command failed. Attempt $n/$max:"
+        sleep $delay;
+      else
+        fail "The command has failed after $n attempts."
+      fi
+    }
+  done
+}
+
+function data_url() {
+  local name="$1"
+  "${CURL[@]}" -H "Accept: application/json" \
+    "https://scihub.copernicus.eu/apihub/odata/v1/Products?\$filter=Name%20eq%20'${name}'" \
+    | jq -r '.d.results[0].__metadata.media_src'
+}
+
+DATA_URL="$(data_url ${NAME})"
+
+retry "${CURL[@]}" --speed-time 15 --speed-limit 1024 -o "${NAME}.zip" "${DATA_URL}"
