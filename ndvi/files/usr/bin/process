@@ -1,6 +1,6 @@
 #!/bin/bash
 
-set -ex
+set -e
 
 function fail() {
   echo "$@" >&2 && exit 1
@@ -14,7 +14,7 @@ function fail() {
 
 if [ -n "${INPUT_CLOUD_COVERAGE}" -a -n "${INPUT_MAX_CLOUD_COVERAGE}" ]; then
   if (( $(bc -l <<<"${INPUT_CLOUD_COVERAGE} > ${INPUT_MAX_CLOUD_COVERAGE}") )); then
-    fail "cloud coverage is to hight: ${INPUT_CLOUD_COVERAGE} > ${INPUT_MAX_CLOUD_COVERAGE}"
+    fail "cloud coverage is to high: ${INPUT_CLOUD_COVERAGE} > ${INPUT_MAX_CLOUD_COVERAGE}"
   fi
 fi
 
