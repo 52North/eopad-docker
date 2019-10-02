@@ -96,6 +96,14 @@ Content-Type: application/json
     {
       "id": "red_factor",
       "input": { "value": 1.0 }
+    },
+    {
+      "id": "cloud_coverage",
+      "input": { "value": 20.12 }
+    },
+    {
+      "id": "max_cloud_coverage",
+      "input": { "value": 20.0 }
     }
   ],
   "outputs": [
