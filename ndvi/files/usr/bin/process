@@ -5,9 +5,18 @@ set -ex
 function fail() {
   echo "$@" >&2 && exit 1
 }
+
 [ $# -ne 0 ] && exec gpt $*
+
 [ -z "${INPUT_SOURCE}" ] && fail 'missing ${INPUT_SOURCE}'
 [ -z "${OUTPUT_RASTER}" ] && fail 'missing ${OUTPUT_RASTER}'
+
+
+if [ -n "${INPUT_CLOUD_COVERAGE}" -a -n "${INPUT_MAX_CLOUD_COVERAGE}" ]; then
+  if (( $(bc -l <<<"${INPUT_CLOUD_COVERAGE} > ${INPUT_MAX_CLOUD_COVERAGE}") )); then
+    fail "cloud coverage is to hight: ${INPUT_CLOUD_COVERAGE} > ${INPUT_MAX_CLOUD_COVERAGE}"
+  fi
+fi
 
 if [ "${INPUT_SOURCE_MIME_TYPE}" = "text/plain" ]; then
   INPUT_SOURCE=$(cat "${INPUT_SOURCE}")

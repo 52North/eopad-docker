@@ -109,6 +109,48 @@
               }
             ]
           }
+        },
+        {
+          "id": "cloud_coverage",
+          "title": "The cloud coverage of the scene.",
+          "minOccurs": 0,
+          "maxOccurs": 1,
+          "input": {
+            "literalDataDomains": [
+              {
+                "default": true,
+                "dataType": { "name": "float" },
+                "valueDefinition": [
+                  {
+                    "minimumValue": "0.0",
+                    "maximumValue": "100.0",
+                    "rangeClosure": "closed"
+                  }
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "id": "max_cloud_coverage",
+          "title": "The maximum cloud coverage of the scene.",
+          "minOccurs": 0,
+          "maxOccurs": 1,
+          "input": {
+            "literalDataDomains": [
+              {
+                "default": true,
+                "dataType": { "name": "float" },
+                "valueDefinition": [
+                  {
+                    "minimumValue": "0.0",
+                    "maximumValue": "100.0",
+                    "rangeClosure": "closed"
+                  }
+                ]
+              }
+            ]
+          }
         }
       ],
       "outputs": [
