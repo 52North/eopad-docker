@@ -23,7 +23,7 @@ fi
 
 area_of_interest="$(jq -rf geojson-to-wkt.jq "${INPUT_AREA_OF_INTEREST}")"
 
-[[ "${area_of_interest}" == "POLYGON*" ]] || fail 'expected polygon geometry'
+[[ "${area_of_interest}" == POLYGON* ]] || fail 'expected polygon geometry'
 
 # Resample product
 gpt S2Resampling -Pdownsampling=Min -PflagDownsampling=First -Presolution=60 -Pupsampling=Bilinear \
